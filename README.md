@@ -1,7 +1,7 @@
 # capistrano/jbundler
 
-capistrano-jbundler is a small Capistrano 3 task which allows you to use jbundler to automatically
-install jar dependencies declared in your Jarfile during deploys.
+capistrano-jbundler is a small Capistrano 3 task which allows you to use [jbundler](https://github.com/mkristian/jbundler) to automatically
+install jar dependencies declared in your [Jarfile](https://github.com/torquebox/maven-tools/wiki/Jarfile) during deploys.
 
 ## Installation
 
