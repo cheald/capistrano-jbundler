@@ -1,10 +1,15 @@
-# Capistrano::Jbundler
+# capistrano/jbundler
 
-TODO: Write a gem description
+capistrano-jbundler is a small Capistrano 3 task which allows you to use jbundler to automatically
+install jar dependencies declared in your Jarfile during deploys.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add to the *top* of your gemfile:
+
+    gem 'jbundler'
+
+and then in your :development group, add:
 
     gem 'capistrano-jbundler'
 
@@ -12,13 +17,21 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+In your `Capfile`:
 
-    $ gem install capistrano-jbundler
+    require 'capistrano/jbundler'
+
+And finally, in your JRuby application:
+
+    JBUNDLER_CLASSPATH.each {|c| require c }
+
+This will expose all Jarfile packages to your JRuby app.
 
 ## Usage
 
-TODO: Write usage instructions here
+jbundler is automatically run after bundler. This causes it to install any dependent jars declared
+in your Jarfile. It doesn't replace bundler due to jar-dependency version conflicts under recent
+(Oct 2014) JRuby builds.
 
 ## Contributing
 
