@@ -1,0 +1,55 @@
+set :rvm_map_bins, fetch(:rvm_map_bins, []).push("jbundle")
+set :bundle_bins,  fetch(:bundle_bins, []).push("jbundle")
+
+namespace :jbundler do
+  desc <<-DESC
+        Install the current JBundler environment. The standard Bundler flags are respected. Additionally,
+        there are settings native to JBundler (Jarfile location, .jbundler file location, etc) which you may
+        want to set. You can override any of these defaults by setting the variables shown below.
+
+            set :jbundler_jarfile, -> { release_path.join('Jarfile') }
+            set :jbundle_classpath, -> { release_path.join(".jbundler/classpath.rb") }
+            set :jbundle_skip, nil
+            set :jbundle_verbose, nil
+            set :jbundle_local_repository, nil
+            set :jbundle_settings, nil
+            set :jbundle_offline, nil
+            set :jbundle_proxy, nil
+            set :jbundle_mirror, nil
+            set :jbundle_work_dir, nil
+            set :jbundle_vendor_dir, nil
+    DESC
+
+  task :install do
+    on fetch(:bundle_servers) do
+      gemfile = fetch(:bundle_gemfile, nil)
+      env_opts = {
+        "BUNDLE_GEMFILE"            => gemfile,
+        "JBUNDLE_JARFILE"           => fetch(:jbundler_jarfile, release_path.join('Jarfile')),
+        "JBUNDLE_CLASSPATH_FILE"    => fetch(:jbundle_classpath, release_path.join(".jbundler/classpath.rb")),
+        "JBUNDLE_SKIP"              => fetch(:jbundle_skip, nil),
+        "JBUNDLE_VERBOSE"           => fetch(:jbundle_verbose, nil),
+        "JBUNDLE_LOCAL_REPOSITORY"  => fetch(:jbundle_local_repository, nil),
+        "JBUNDLE_SETTINGS"          => fetch(:jbundle_settings, nil),
+        "JBUNDLE_OFFLINE"           => fetch(:jbundle_offline, nil),
+        "JBUNDLE_PROXY"             => fetch(:jbundle_proxy, nil),
+        "JBUNDLE_MIRROR"            => fetch(:jbundle_mirror, nil),
+        "JBUNDLE_WORK_DIR"          => fetch(:jbundle_work_dir, nil),
+        "JBUNDLE_VENDOR_DIR"        => fetch(:jbundle_vendor_dir, nil)
+      }
+
+      with(env_opts.select { |_, value| !value.nil? }) do
+        options = ["install"]
+        options << "--binstubs #{fetch(:bundle_binstubs)}" if fetch(:bundle_binstubs)
+        options << "--gemfile #{gemfile}" if gemfile
+        options << "--path #{fetch(:bundle_path)}" if fetch(:bundle_path)
+        options << "--without #{fetch(:bundle_without)}" if fetch(:bundle_without)
+        options << "--jobs #{fetch(:bundle_jobs)}" if fetch(:bundle_jobs)
+        options << "#{fetch(:bundle_flags)}" if fetch(:bundle_flags)
+        execute :jbundle, options
+      end
+    end
+  end
+
+  after "bundler:install", "jbundler:install"
+end
