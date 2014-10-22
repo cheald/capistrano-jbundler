@@ -1,7 +1,1 @@
-require "capistrano/jbundler/version"
-
-module Capistrano
-  module Jbundler
-    # Your code goes here...
-  end
-end
+load File.expand_path('../jbundler/tasks/jbundler.cap', __FILE__)
